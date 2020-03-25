@@ -1,0 +1,24 @@
+ARG_ENABLE("consulate", "enable consulate", "no");
+
+if (PHP_CONSULATE != "no") {
+  EXTENSION("consulate", "consulate.c", null, "-I"+configure_module_dirname);
+  ADD_SOURCES(configure_module_dirname + "/kernel", "main.c memory.c exception.c debug.c backtrace.c object.c array.c string.c fcall.c require.c file.c operators.c math.c concat.c variables.c filter.c iterator.c exit.c time.c", "consulate");
+  /* PCRE is always included on WIN32 */
+  AC_DEFINE("ZEPHIR_USE_PHP_PCRE", 1, "Whether PHP pcre extension is present at compile time");
+  if (PHP_JSON != "no") {
+    ADD_EXTENSION_DEP("consulate", "json");
+    AC_DEFINE("ZEPHIR_USE_PHP_JSON", 1, "Whether PHP json extension is present at compile time");
+  }
+  
+  ADD_SOURCES(configure_module_dirname + "/consulate", "model.zep.c exception.zep.c values.zep.c client.zep.c config.zep.c querymeta.zep.c queryoptions.zep.c writemeta.zep.c writeoptions.zep.c 0__closure.zep.c 1__closure.zep.c", "consulate");
+	ADD_SOURCES(configure_module_dirname + "/consulate/api", "endpoint.zep.c acl.zep.c agent.zep.c catalog.zep.c coordinate.zep.c event.zep.c exception.zep.c health.zep.c kv.zep.c operator.zep.c query.zep.c session.zep.c snapshot.zep.c status.zep.c", "consulate");
+	ADD_SOURCES(configure_module_dirname + "/consulate/api/agent", "servicecheck.zep.c check.zep.c checkregistration.zep.c exception.zep.c gaugevalue.zep.c member.zep.c metricsinfo.zep.c pointvalue.zep.c sampledvalue.zep.c service.zep.c serviceregistration.zep.c", "consulate");
+	ADD_SOURCES(configure_module_dirname + "/consulate/api/catalog", "node.zep.c", "consulate");
+	ADD_SOURCES(configure_module_dirname + "/consulate/api/health", "check.zep.c exception.zep.c service.zep.c", "consulate");
+	ADD_SOURCES(configure_module_dirname + "/consulate/api/kv", "exception.zep.c pair.zep.c", "consulate");
+	ADD_SOURCES(configure_module_dirname + "/consulate/http", "auth.zep.c exception.zep.c headers.zep.c params.zep.c request.zep.c response.zep.c uri.zep.c", "consulate");
+	ADD_SOURCES(configure_module_dirname + "/consulate/http/client", "curl.zep.c exception.zep.c", "consulate");
+  ADD_FLAG("CFLAGS_CONSULATE", "/D ZEPHIR_RELEASE /Oi /Ot /Oy /Ob2 /Gs /GF /Gy /GL");
+  ADD_FLAG("CFLAGS", "/D ZEPHIR_RELEASE /Oi /Ot /Oy /Ob2 /Gs /GF /Gy /GL");
+  ADD_FLAG("LDFLAGS", "/LTCG");
+}
